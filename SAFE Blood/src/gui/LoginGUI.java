@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.Connection;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,6 +20,8 @@ import javax.swing.JTextField;
 import sqlconnection.SQLConnection;
 
 public class LoginGUI {
+	private static Connection connection = null;
+
 	public static JPanel createLoginGUI() {
 		GridBagConstraints constraints = new GridBagConstraints();
 		JPanel loginPanel = new JPanel(new GridBagLayout());
@@ -63,7 +66,11 @@ public class LoginGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SQLConnection.connectToDatabase();
+				connection = SQLConnection.connectToDatabase();
+				if (connection != null) {
+					button.getParent().getParent().add(ViewGUI.createViewGUI());
+					button.getParent().getParent().remove(button.getParent());
+				}
 			}
 		});
 		return button;
@@ -94,7 +101,11 @@ public class LoginGUI {
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					SQLConnection.connectToDatabase();
+					connection = SQLConnection.connectToDatabase();
+					if (connection != null) {
+						textField.getParent().getParent().add(ViewGUI.createViewGUI());
+						textField.getParent().getParent().remove(textField.getParent());
+					}
 				}
 			}
 		});
@@ -104,7 +115,6 @@ public class LoginGUI {
 	public static JPasswordField addPasswordField() {
 		JPasswordField passwordField = new JPasswordField(10);
 		passwordField.addKeyListener(new KeyListener() {
-
 			@Override
 			public void keyTyped(KeyEvent e) {
 			}
@@ -116,7 +126,11 @@ public class LoginGUI {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					SQLConnection.connectToDatabase();
+					connection = SQLConnection.connectToDatabase();
+					if (connection != null) {
+						passwordField.getParent().getParent().add(ViewGUI.createViewGUI());
+						passwordField.getParent().getParent().remove(passwordField.getParent());
+					}
 				}
 			}
 		});
