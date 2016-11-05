@@ -3,11 +3,6 @@ package gui;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
