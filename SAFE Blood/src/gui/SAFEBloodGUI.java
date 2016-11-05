@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.CardLayout;
 import java.awt.EventQueue;
+import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,15 +14,14 @@ public class SAFEBloodGUI extends JFrame{
 		initialize();
 	}
 	private void initialize(){
+		Rectangle rectangle = new Rectangle(435, 1, 830, 430);
 		getContentPane().setLayout(new CardLayout());
 		setTitle("S.A.F.E. Blood DBMS");
-		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		setBounds(rectangle);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		JPanel loginPanel = LoginGUI.createLoginGUI();
 		
 		getContentPane().add(loginPanel);
-		pack();
 	}
 	
 	public static void main(String[] args){
