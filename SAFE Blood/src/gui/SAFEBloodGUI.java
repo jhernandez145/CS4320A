@@ -2,35 +2,43 @@ package gui;
 
 import java.awt.CardLayout;
 import java.awt.EventQueue;
-import java.awt.Rectangle;
+import java.awt.FlowLayout;
+
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
 public class SAFEBloodGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public SAFEBloodGUI() {
-		initialize();
-	}
+		setTitle("SAFE Blood DBMS");
+		setLayout(new FlowLayout());
 
-	private void initialize(){
-		Rectangle rectangle = new Rectangle(0, 0, 830, 430);
-		getContentPane().setLayout(new CardLayout());
-		setTitle("S.A.F.E. Blood DBMS");
-		setBounds(rectangle);
-		setLocationRelativeTo(null);
+		JMenuBar menuBar = new JMenuBar();
+		JMenu optionsMenu = new JMenu("Options");
+
+		menuBar.add(optionsMenu);
+
+		JPanel mainPanel = new JPanel(new CardLayout());
+		JPanel login = new LoginGUI();
+		JPanel view = new ViewGUI();
+		mainPanel.add(login, "0");
+		mainPanel.add(view, "1");
+
+		add(mainPanel);
+		setJMenuBar(menuBar);
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JPanel loginPanel = LoginGUI.createLoginGUI();
-		JPanel viewPanel = ViewGUI.createViewGUI();
-		
-		//TODO add listener to see when loginPanel gets removed so that it will maximize screen
-		getContentPane().add(loginPanel);
+		pack();
+		setVisible(true);
 	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
+			@SuppressWarnings("unused")
 			SAFEBloodGUI gui = new SAFEBloodGUI();
-			gui.setVisible(true);
 		});
 	}
 }

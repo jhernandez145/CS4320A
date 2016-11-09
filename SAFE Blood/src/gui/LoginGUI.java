@@ -1,15 +1,12 @@
 package gui;
 
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
+import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.sql.Connection;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,123 +14,68 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import sqlconnection.SQLConnection;
+public class LoginGUI extends JPanel {
+	private static final long serialVersionUID = 1L;
 
-public class LoginGUI {
-	private static Connection connection = null;
-
-	public static JPanel createLoginGUI() {
+	public LoginGUI() {
 		GridBagConstraints constraints = new GridBagConstraints();
-		JPanel loginPanel = new JPanel(new GridBagLayout());
-		loginPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		Font font = new Font("Courier", Font.ITALIC, 30);
 
-		constraints = setConstraints(0, 0);
-		loginPanel.add(addJLabel("Username: "), constraints);
+		setLayout(new GridBagLayout());
+		constraints.insets = new Insets(5, 5, 5, 5);
 
-		constraints = setConstraints(1, 0);
-		constraints.ipadx = 300;
-		loginPanel.add(addJTextField(), constraints);
-
-		constraints = setConstraints(0, 1);
-		loginPanel.add(addJLabel("Password: "), constraints);
-
-		constraints = setConstraints(1, 1);
-		loginPanel.add(addPasswordField(), constraints);
-
-		constraints = setConstraints(0, 3);
-		constraints.gridwidth = 2;
-		loginPanel.add(addButton("Login"), constraints);
-
-		return loginPanel;
-	}
-
-	public static GridBagConstraints setConstraints(int gridx, int gridy) {
-		GridBagConstraints constraints = new GridBagConstraints();
+		JLabel usernameLabel = new JLabel("Username: ");
+		usernameLabel.setFont(font);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
+		constraints.weightx = 0.5;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.weightx = 0.0;
-		constraints.gridx = gridx;
-		constraints.gridy = gridy;
+		add(usernameLabel, constraints);
 
-		return constraints;
-	}
+		JTextField usernameTextField = new JTextField(15);
+		usernameTextField.setFont(font);
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
+		constraints.weightx = 0.5;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		add(usernameTextField, constraints);
 
-	public static JButton addButton(String title) {
-		Dimension dimension = new Dimension(450, 50);
-		JButton button = new JButton(title);
-		button.setFont(new Font("Courier", Font.BOLD, 25));
-		button.setPreferredSize(dimension);
-		button.addActionListener(new ActionListener() {
+		JLabel passwordLabel = new JLabel("Password: ");
+		passwordLabel.setFont(font);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.gridwidth = 2;
+		constraints.weightx = 0.5;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		add(passwordLabel, constraints);
+
+		JPasswordField passwordField = new JPasswordField(15);
+		passwordField.setFont(font);
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		constraints.gridwidth = 2;
+		constraints.weightx = 0.5;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		add(passwordField, constraints);
+
+		JButton loginButton = new JButton("Login");
+		loginButton.setFont(font);
+		loginButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				connection = SQLConnection.connectToDatabase();
-				if (connection != null) {
-					button.getParent().getParent().add(ViewGUI.createViewGUI());
-					button.getParent().getParent().remove(button.getParent());
-				}
+				CardLayout cl = (CardLayout) getParent().getLayout();
+				cl.next(getParent());
 			}
 		});
-		return button;
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		constraints.gridwidth = 3;
+		constraints.weightx = 0.5;
+		constraints.fill = GridBagConstraints.CENTER;
+		add(loginButton, constraints);
 	}
 
-	public static JLabel addJLabel(String title) {
-		Dimension dimension = new Dimension(400, 400);
-		JLabel label = new JLabel(title);
-		label.setFont(new Font("Courier", Font.ITALIC, 25));
-		label.setPreferredSize(dimension);
-
-		return label;
-	}
-
-	public static JTextField addJTextField() {
-		JTextField textField = new JTextField(10);
-		textField.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					connection = SQLConnection.connectToDatabase();
-					if (connection != null) {
-						textField.getParent().getParent().add(ViewGUI.createViewGUI());
-						textField.getParent().getParent().remove(textField.getParent());
-					}
-				}
-			}
-		});
-		return textField;
-	}
-
-	public static JPasswordField addPasswordField() {
-		JPasswordField passwordField = new JPasswordField(10);
-		passwordField.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					connection = SQLConnection.connectToDatabase();
-					if (connection != null) {
-						passwordField.getParent().getParent().add(ViewGUI.createViewGUI());
-						passwordField.getParent().getParent().remove(passwordField.getParent());
-					}
-				}
-			}
-		});
-		return passwordField;
-	}
 }
