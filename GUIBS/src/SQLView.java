@@ -29,10 +29,6 @@ public class SQLView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
 	private JTable table;
-	/**
-	 * Launch the application.
-	 */
-
 
 	/**
 	 * Create the frame.
@@ -73,8 +69,7 @@ public class SQLView extends JFrame {
 		table = new JTable(makeTableModel((ResultSet) metaData[2]));
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>((TableModel) table.getModel());
 		table.setRowSorter(sorter);
-		
-		
+
 		scrollPane.setViewportView(table);
 
 		JLabel lblWhere = new JLabel("Where");
@@ -107,10 +102,9 @@ public class SQLView extends JFrame {
 		attributes = (Vector<String>) metaData[0];
 		JList<String> list = new JList<String>(new DefaultListModel<String>());
 		attributes.forEach((attr) -> {
-			((DefaultListModel<String>)list.getModel()).addElement(attr);
+			((DefaultListModel<String>) list.getModel()).addElement(attr);
 		});
-		
-		
+
 		GridBagConstraints gbc_list = new GridBagConstraints();
 		gbc_list.gridwidth = 3;
 		gbc_list.gridheight = 5;
@@ -149,7 +143,7 @@ public class SQLView extends JFrame {
 				String sqlCustomWHERE = textField.getText();
 				System.out.println("creating sql statement...");
 				StringBuilder sbWHERE = new StringBuilder();
-				if(! sqlCustomWHERE.isEmpty()){
+				if (!sqlCustomWHERE.isEmpty()) {
 					String[] reWHERE = sqlCustomWHERE.split(";"); // all WHERE
 					System.out.println(reWHERE.toString().length());
 					if (reWHERE.length != 0) {
@@ -162,13 +156,12 @@ public class SQLView extends JFrame {
 								sbWHERE.append(reWHERE[index] + " ");
 							}
 						}
-					}else if(reWHERE.length == 0){
+					} else if (reWHERE.length == 0) {
 						sbWHERE.append("");
 					}
-				}else{
+				} else {
 					sbWHERE.append("");
 				}
-				
 
 				String WHERE = sbWHERE.toString();
 				System.out.println(WHERE);
@@ -218,7 +211,7 @@ public class SQLView extends JFrame {
 			}
 		});
 		mnQuery.add(mntmReset);
-		
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/blood-drop-icon.png")));
 		setTitle("SAFE Blood DBMS");
 		pack();
@@ -250,12 +243,13 @@ public class SQLView extends JFrame {
 
 		return null;
 	}
+
 	public static Vector<String> GetAttributeNames(ResultSet rs) {
 		ResultSetMetaData rsMetaData;
 		try {
 			rsMetaData = rs.getMetaData();
-		Vector<String> columnNames = new Vector<String>();
-	
+			Vector<String> columnNames = new Vector<String>();
+
 			for (int column = 1; column <= rsMetaData.getColumnCount(); column++) {
 				columnNames.add(rsMetaData.getColumnName(column));
 			}

@@ -1,5 +1,4 @@
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
@@ -16,17 +15,66 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SQLConnection {
-	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	static final String DB_URL = "jdbc:mysql://localhost:3306/SAFEBLOOD?autoReconnect=true&useSSL=false";
-	static final String user = "root";
-	static final String password = "";
+	private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+	private static final String DB_URL = "jdbc:mysql://localhost:3306/SAFEBLOOD?autoReconnect=true&useSSL=false";
+	private static final String DB_USER = "root";
+	private static final String DB_PASS = "";
+	private String user;
+	private String pass;
+	private static boolean auth;
+	private int employeeID;
+	
+	public boolean isAuth(){
+		return auth;
+	}
+	public SQLConnection(String user, String pass) {
+		this.user = user;
+		this.pass = pass;
+		PreparedStatement preparedStatement = null;
+		Connection connection = null;
+		try {
+			connection = SQLConnection.connectToDatabase();
+			String SQL = "SELECT * FROM employee WHERE (username = ? and password = ?)";
+			preparedStatement = connection.prepareStatement(SQL);
+			preparedStatement.setString(1, user);
+			preparedStatement.setString(2, pass);
+			
+			System.out.println(preparedStatement.toString());
+			preparedStatement.setQueryTimeout(15);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			System.out.println("RS done");
+			
+			while(resultSet.next()){
+				String name = resultSet.getString("firstname");
+				String usr = resultSet.getString("username");
+				String pwd = resultSet.getString("password");
+				int empID = resultSet.getInt("employeeID");
+				System.out.println(name + "\t" + usr + "\t" + pwd + "\t" + empID);
+				System.out.println(user + "==" + usr + ":" + user.equals(usr));
+				System.out.println(pass + "==" + pwd + ":" + pass.equals(pwd));
+
+				if(user.equals(usr) && pass.equals(pwd)){
+					System.out.println("true");
+					SQLConnection.auth = true;
+					employeeID = empID;
+				}
+			}
+			
+			
+			connection = SQLConnection.connectToDatabase();
+		} catch (Exception e) {
+			e.getStackTrace();
+		}
+	}
 
 	public static void testConnection() {
 		Connection connection = null;
 		try {
 			// System.out.println("Testing connection...");
 			Class.forName(JDBC_DRIVER);
-			connection = DriverManager.getConnection(DB_URL, user, password);
+			connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
 			System.out.println("Connection established!");
 			connection.close();
 		} catch (SQLException e) {
@@ -45,12 +93,12 @@ public class SQLConnection {
 		}
 	}
 
-	public static Connection connectToDatabase(String user, String password) {
+	public static Connection connectToDatabase() {
 		Connection connection = null;
 		try {
 			// System.out.println("Establishing connection...");
 			Class.forName(JDBC_DRIVER);
-			connection = DriverManager.getConnection(DB_URL, user, password);
+			connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
 			// System.out.println("Connection established!");
 		} catch (SQLException e) {
 			System.out.println("SQL Exception: " + e.getMessage());
@@ -66,13 +114,10 @@ public class SQLConnection {
 
 	public static void closeConnectionToDatabase(Connection connection) {
 		try {
-			// System.out.println("Closing connection...");
 			if (connection != null) {
 				connection.close();
-				// System.out.println("Connection closed!");
 				return;
 			} else {
-				// System.out.println("Connection already closed!");
 				return;
 			}
 		} catch (SQLException e) {
@@ -86,7 +131,7 @@ public class SQLConnection {
 		Statement statement = null;
 		Connection connection = null;
 		try {
-			connection = connectToDatabase(user, password);
+			connection = connectToDatabase();
 			statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 
@@ -97,6 +142,52 @@ public class SQLConnection {
 		return null;
 	}
 
+	public static void populateTableHCProv() {
+		File file = new File("TupleTextFiles\\HC_Provider.txt");
+		String sql = "INSERT INTO hc_provider (providerID, name, email, address, phoneNumber)" + " VALUES(?,?,?,?,?)";
+		PreparedStatement preparedStatement = null;
+		Connection connection = null;
+
+		try {
+			connection = SQLConnection.connectToDatabase();
+			Scanner inputFile = new Scanner(file, "UTF-16");
+			while (inputFile.hasNext()) {
+				String string = inputFile.nextLine();
+
+				String[] re = string.split(";");
+
+				String providerID = re[0];
+				String name = re[1];
+				String email = re[2];
+				String address = re[3];
+				String phoneNumber = re[4];
+
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, providerID);
+				preparedStatement.setString(2, name);
+				preparedStatement.setString(3, email);
+				preparedStatement.setString(4, address);
+				preparedStatement.setString(5, phoneNumber);
+
+				preparedStatement.executeUpdate();
+			}
+			SQLConnection.closeConnectionToDatabase(connection);
+			inputFile.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("File Exception: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("SQL Exception: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("Exception: " + e.getMessage());
+		} finally {
+			if (connection != null) {
+				SQLConnection.closeConnectionToDatabase(connection);
+			} else {
+
+			}
+		}
+	}
+
 	public static void populateTableBranch() {
 		File file = new File("TupleTextFiles\\Branch.txt");
 		String sql = "INSERT INTO branch (branchID, branchName, address, phoneNumber, email)"
@@ -105,7 +196,7 @@ public class SQLConnection {
 		Connection connection = null;
 
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			Scanner inputFile = new Scanner(file, "UTF-16");
 			while (inputFile.hasNext()) {
 				String string = inputFile.nextLine();
@@ -131,7 +222,7 @@ public class SQLConnection {
 		} catch (FileNotFoundException e) {
 			System.out.println("File Exception: " + e.getMessage());
 		} catch (SQLException e) {
-			System.out.println("File Exception: " + e.getMessage());
+			System.out.println("SQL Exception: " + e.getMessage());
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());
 		} finally {
@@ -151,7 +242,7 @@ public class SQLConnection {
 		Connection connection = null;
 
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			System.out.println("empID\tposition\tsalary\tphoneNumber\tfname\tlname\temail\tmgrID\taddress\tbranchID");
 			Scanner inputFile = new Scanner(file, "UTF-16");
 			while (inputFile.hasNextLine()) {
@@ -194,7 +285,7 @@ public class SQLConnection {
 		} catch (FileNotFoundException e) {
 			System.out.println("File Exception: " + e.getMessage());
 		} catch (SQLException e) {
-			System.out.println("File Exception: " + e.getMessage());
+			System.out.println("SQL Exception: " + e.getMessage());
 		} catch (Exception e) {
 			System.out.println("Exception: " + e.getMessage());
 		} finally {
@@ -214,7 +305,7 @@ public class SQLConnection {
 		Connection connection = null;
 
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			Scanner inputFile = new Scanner(file, "UTF-16");
 			while (inputFile.hasNextLine()) {
 				String string = inputFile.nextLine();
@@ -264,7 +355,7 @@ public class SQLConnection {
 		Connection connection = null;
 
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			Scanner inputFile = new Scanner(file, "UTF-16");
 			while (inputFile.hasNextLine()) {
 				String string = inputFile.nextLine();
@@ -308,13 +399,7 @@ public class SQLConnection {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
-			/*
-			 * DatabaseMetaData metaData = connection.getMetaData(); ResultSet
-			 * resultSet = metaData.getTables(null, null, "%", null);
-			 * while(resultSet.next()){ resultSet.getString(3) // column 3 is
-			 * the TABLE_NAME }
-			 */
+			connection = SQLConnection.connectToDatabase();
 
 			preparedStatement = connection.prepareStatement(sql);
 
@@ -351,7 +436,7 @@ public class SQLConnection {
 		String[] types = { "TABLE" };
 		Vector<String> tableNames = new Vector<String>();
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			DatabaseMetaData metaData = connection.getMetaData();
 			resultSet = metaData.getTables("SAFEBLOOD", null, "%", types);
 
@@ -359,7 +444,6 @@ public class SQLConnection {
 				tableNames.add(resultSet.getString(3)); // column 3 holds table
 														// names
 			}
-			// System.out.println("All tables in database: " + tableNames.toString());
 			resultSet.close();
 			SQLConnection.closeConnectionToDatabase(connection);
 			return tableNames;
@@ -389,7 +473,7 @@ public class SQLConnection {
 		ResultSet resultSet = null;
 
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			DatabaseMetaData metadata = connection.getMetaData();
 			for (int index = 0; index < tableNames.size(); index++) {
 				Vector<String> attributeNames = new Vector<String>();
@@ -403,7 +487,6 @@ public class SQLConnection {
 				}
 				attributesByTable.put(tableNames.get(index), attributeNames);
 			}
-			// System.out.println("Attributes by table: \n" + attributesByTable.toString());
 			SQLConnection.closeConnectionToDatabase(connection);
 			resultSet.close();
 			return attributesByTable;
@@ -430,9 +513,6 @@ public class SQLConnection {
 		Vector<String> tablesRequired = new Vector<String>();
 		Vector<String> allTables = SQLConnection.getAllTables();
 		Map<String, Vector<String>> attributesByTable = SQLConnection.getAttributeNamesByTable();
-
-		// System.out.println(allTables);
-		// System.out.println(attributesByTable);
 
 		for (int indexAttribute = 0; indexAttribute < attributes.size(); indexAttribute++) { // for
 																								// every
@@ -462,7 +542,6 @@ public class SQLConnection {
 			}
 		}
 
-		// System.out.println("Tables required: " + tablesRequired);
 		return tablesRequired;
 	}
 
@@ -488,7 +567,7 @@ public class SQLConnection {
 					}
 				});
 			});
-			
+
 			return (foreignKeyByDestByPrimaryTable).toString();
 
 		}
@@ -504,8 +583,9 @@ public class SQLConnection {
 	}
 
 	public static boolean attributeIsInTable(String attribute, String table) {
-		if(SQLConnection.getAttributesInTable(table).contains(attribute)){
-			System.out.println(attribute + " is in " + table + ": " + SQLConnection.getAttributesInTable(table).contains(attribute));
+		if (SQLConnection.getAttributesInTable(table).contains(attribute)) {
+			System.out.println(attribute + " is in " + table + ": "
+					+ SQLConnection.getAttributesInTable(table).contains(attribute));
 		}
 		return SQLConnection.getAttributesInTable(table).contains(attribute);
 	}
@@ -520,7 +600,7 @@ public class SQLConnection {
 		Vector<String> allPrimaryKeys = new Vector<String>();
 		Vector<String> allTables = SQLConnection.getAllTables();
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			DatabaseMetaData metaData = connection.getMetaData();
 
 			for (String tableName : allTables) {
@@ -532,7 +612,6 @@ public class SQLConnection {
 			}
 			SQLConnection.closeConnectionToDatabase(connection);
 			resultSet.close();
-			// System.out.println(allPrimaryKeys.toString());
 			return allPrimaryKeys;
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
@@ -560,7 +639,7 @@ public class SQLConnection {
 		ResultSet resultSet = null;
 
 		try {
-			connection = SQLConnection.connectToDatabase(user, password);
+			connection = SQLConnection.connectToDatabase();
 			DatabaseMetaData metaData = connection.getMetaData();
 
 			for (String tableName : allTables) {
@@ -572,7 +651,6 @@ public class SQLConnection {
 			}
 			SQLConnection.closeConnectionToDatabase(connection);
 			resultSet.close();
-			// System.out.println(primaryKeysPerTable.toString());
 			return primaryKeysPerTable;
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
@@ -598,23 +676,24 @@ public class SQLConnection {
 		return SQLConnection.getAttributeNamesByTable().get(table);
 	}
 
-	public static ResultSet getAllEmployeeResultSet(){
+	public static ResultSet getAllEmployeeResultSet() {
 		String sql = "SELECT * FROM employee";
 		return SQLConnection.exectuteQuery(sql);
 	}
-	public static ResultSet getAllBloodResultSet(){
+
+	public static ResultSet getAllBloodResultSet() {
 		String sql = "SELECT * FROM blood";
 		return SQLConnection.exectuteQuery(sql);
 	}
-	
-	public static Object[] getMetaData(String table, String SQL){
+
+	public static Object[] getMetaData(String table, String SQL) {
 		Vector<String> attributes = SQLConnection.getAttributesInTable(table);
 		System.out.println(table + " gmd: " + attributes);
 		String primaryKey = SQLConnection.getPrimaryKeysByTable().get(table);
 		ResultSet resultSet = SQLConnection.exectuteQuery(SQL);
-		
-		Object[] metaData = {attributes, primaryKey, resultSet};
-		
+
+		Object[] metaData = { attributes, primaryKey, resultSet };
+
 		return metaData;
 	}
 }

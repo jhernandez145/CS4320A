@@ -55,16 +55,16 @@ public class Login {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/blood-drop-icon.png")));
-		
+
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{23, 75, 0, 59, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWidths = new int[] { 23, 75, 0, 59, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
-		
+
 		JLabel lblUsername = new JLabel("Username: ");
 		lblUsername.setHorizontalAlignment(SwingConstants.CENTER);
 		lblUsername.setSize(new Dimension(3, 0));
@@ -74,7 +74,7 @@ public class Login {
 		gbc_lblUsername.gridx = 1;
 		gbc_lblUsername.gridy = 2;
 		panel.add(lblUsername, gbc_lblUsername);
-		
+
 		textField = new JTextField();
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.insets = new Insets(0, 0, 5, 0);
@@ -83,7 +83,7 @@ public class Login {
 		gbc_textField.gridy = 2;
 		panel.add(textField, gbc_textField);
 		textField.setColumns(10);
-		
+
 		JLabel lblPassword = new JLabel("Password: ");
 		lblPassword.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_lblPassword = new GridBagConstraints();
@@ -91,7 +91,7 @@ public class Login {
 		gbc_lblPassword.gridx = 1;
 		gbc_lblPassword.gridy = 5;
 		panel.add(lblPassword, gbc_lblPassword);
-		
+
 		passwordField = new JPasswordField();
 		GridBagConstraints gbc_passwordField = new GridBagConstraints();
 		gbc_passwordField.insets = new Insets(0, 0, 5, 0);
@@ -99,13 +99,19 @@ public class Login {
 		gbc_passwordField.gridx = 4;
 		gbc_passwordField.gridy = 5;
 		panel.add(passwordField, gbc_passwordField);
-		
+
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JFrame viewFrame = new ViewListFrame();
-				viewFrame.setVisible(true);
-				frame.setVisible(false);
+				String user = textField.getText();
+				String pass = new String(passwordField.getPassword());
+				SQLConnection sqlConnection = new SQLConnection(user, pass);
+				
+				if(sqlConnection.isAuth()){
+					JFrame viewFrame = new ViewListFrame();
+					viewFrame.setVisible(true);
+					frame.setVisible(false);
+				}
 			}
 		});
 		GridBagConstraints gbc_btnLogin = new GridBagConstraints();
@@ -114,7 +120,7 @@ public class Login {
 		gbc_btnLogin.gridx = 2;
 		gbc_btnLogin.gridy = 7;
 		panel.add(btnLogin, gbc_btnLogin);
-		
+
 		frame.setTitle("SAFE Blood DBMS");
 		frame.pack();
 	}
