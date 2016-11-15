@@ -133,7 +133,7 @@ public class ViewListFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new SQLView("Reports");
+				new ReportList();
 
 			}
 		});

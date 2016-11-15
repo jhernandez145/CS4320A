@@ -106,8 +106,8 @@ public class Login {
 				String user = textField.getText();
 				String pass = new String(passwordField.getPassword());
 				SQLConnection sqlConnection = new SQLConnection(user, pass);
-				
-				if(sqlConnection.isAuth()){
+
+				if (sqlConnection.isAuth()) {
 					JFrame viewFrame = new ViewListFrame();
 					viewFrame.setVisible(true);
 					frame.setVisible(false);

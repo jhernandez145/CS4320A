@@ -191,11 +191,9 @@ public class SQLView extends JFrame {
 				table.setModel(makeTableModel((ResultSet) metaData[2]));
 				System.out.println(table.toString());
 				table.setAutoCreateRowSorter(true);
-				table.setRowSorter(new TableRowSorter<TableModel>(table.getModel()) {
-				});
+				table.setRowSorter(new TableRowSorter<TableModel>(table.getModel()));
 			}
 		});
-		System.out.println("table refreshed?");
 		mnQuery.add(mntmRefresh);
 
 		JMenuItem mntmReset = new JMenuItem("Reset");
@@ -212,6 +210,15 @@ public class SQLView extends JFrame {
 		});
 		mnQuery.add(mntmReset);
 
+		JMenuItem mntmExecute = new JMenuItem("Execute");
+		mntmExecute.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new executeInternalFrame((ResultSet) metaData[2], FROMTable);
+			}
+		});
+		mnQuery.add(mntmExecute);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/blood-drop-icon.png")));
 		setTitle("SAFE Blood DBMS");
 		pack();
@@ -221,7 +228,6 @@ public class SQLView extends JFrame {
 	public static DefaultTableModel makeTableModel(ResultSet rs) {
 		try {
 			ResultSetMetaData rsMetaData = rs.getMetaData();
-			System.out.println("metadata.length " + rs.getMetaData().getColumnCount());
 			Vector<String> columnNames = new Vector<String>();
 			for (int column = 1; column <= rsMetaData.getColumnCount(); column++) {
 				columnNames.add(rsMetaData.getColumnName(column));
@@ -230,12 +236,20 @@ public class SQLView extends JFrame {
 			while (rs.next()) {
 				Vector<Object> vector = new Vector<Object>();
 				for (int columnIndex = 1; columnIndex <= rsMetaData.getColumnCount(); columnIndex++) {
-					vector.add(rs.getObject(columnIndex));
+
+					if (rsMetaData.getColumnName(columnIndex).equals("Salary")) {
+						if (SQLConnection.isManager((int) rs.getObject("employeeID"), (int) rs.getObject("mgrID"))) {
+							vector.add(rs.getObject(columnIndex));
+						} else {
+							vector.add("xxx.xx");
+						}
+					} else {
+						vector.add(rs.getObject(columnIndex));
+					}
+
 				}
-				System.out.println("vector: " + vector);
 				data.add(vector);
 			}
-			System.out.println("data: " + data);
 			return new DefaultTableModel(data, columnNames);
 		} catch (SQLException e) {
 			e.printStackTrace();
