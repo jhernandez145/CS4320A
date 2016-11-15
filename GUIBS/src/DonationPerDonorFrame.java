@@ -74,8 +74,6 @@ public class DonationPerDonorFrame extends JFrame {
 				}
 				data.add(vector);
 			}
-			System.out.println(data);
-			System.out.println(columnNames);
 			return new DefaultTableModel(data, columnNames);
 		} catch (SQLException e) {
 			e.printStackTrace();

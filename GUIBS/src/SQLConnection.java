@@ -161,7 +161,13 @@ public class SQLConnection {
 		}
 		return null;
 	}
-
+	
+	public static void populateTableRequests(){
+		File file = new File("TupleTextFiles\\Requests.txt");
+		String sql = "INSERT INTO request (requistID, bloodAmount, bloodType, bloodconfirm, branchID, providerID, requestMonth, requestDay, requestYear)"
+				+"VALUES(?,?,?,?,?,?,?,?,?)";
+	}
+	
 	public static void populateTableHCProv() {
 		File file = new File("TupleTextFiles\\HC_Provider.txt");
 		String sql = "INSERT INTO hc_provider (providerID, name, email, address, phoneNumber)" + " VALUES(?,?,?,?,?)";
