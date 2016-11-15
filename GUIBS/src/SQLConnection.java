@@ -707,19 +707,15 @@ public class SQLConnection {
 	}
 
 	public static ResultSet getDonationPerDonorReport(){
+		Statement st = null;
 		ResultSet rs = null;
-		Connection connection = null;
-		Statement statement = null;
-		
-		String sql = "SELECT d.LastName, d.FirstName, b.BloodAmount FROM Donor AS d JOIN Blood AS b on d.donorID = b.donorID";
-		
-		connection = SQLConnection.connectToDatabase();
+		String sql = "SELECT LastName, FirstName, BloodAmount FROM Donor JOIN Blood on Donor.donorID = Blood.donorID";
 		try {
-			statement = connection.createStatement();
-			rs = statement.executeQuery(sql);
-			while(rs.next()){
-				
-			}
+			Connection connection = SQLConnection.connectToDatabase();
+			st = connection.createStatement();
+			rs = st.executeQuery(sql);
+			
+			
 			return rs;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

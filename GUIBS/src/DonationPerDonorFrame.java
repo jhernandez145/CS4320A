@@ -1,5 +1,5 @@
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.ScrollPane;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -7,11 +7,12 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.JTable;
 
 public class DonationPerDonorFrame extends JFrame {
 
@@ -34,11 +35,17 @@ public class DonationPerDonorFrame extends JFrame {
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
 		
+		JScrollPane scrollPane = new JScrollPane();
+		
+		
 		table = new JTable(makeTableModel(SQLConnection.getDonationPerDonorReport()));
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>((TableModel) table.getModel());
 		table.setRowSorter(sorter);
 
-		panel.add(table, BorderLayout.CENTER);
+		scrollPane.setViewportView(table);
+		
+		
+		panel.add(scrollPane, BorderLayout.CENTER);
 		pack();
 		setVisible(true);
 	}
@@ -54,7 +61,6 @@ public class DonationPerDonorFrame extends JFrame {
 			while (rs.next()) {
 				Vector<Object> vector = new Vector<Object>();
 				for (int columnIndex = 1; columnIndex <= rsMetaData.getColumnCount(); columnIndex++) {
-
 					if (rsMetaData.getColumnName(columnIndex).equals("Salary")) {
 						if (SQLConnection.isManager((int) rs.getObject("employeeID"), (int) rs.getObject("mgrID"))) {
 							vector.add(rs.getObject(columnIndex));
@@ -68,6 +74,8 @@ public class DonationPerDonorFrame extends JFrame {
 				}
 				data.add(vector);
 			}
+			System.out.println(data);
+			System.out.println(columnNames);
 			return new DefaultTableModel(data, columnNames);
 		} catch (SQLException e) {
 			e.printStackTrace();
