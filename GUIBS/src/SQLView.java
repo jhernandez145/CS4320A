@@ -69,6 +69,8 @@ public class SQLView extends JFrame {
 		table = new JTable(makeTableModel((ResultSet) metaData[2]));
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>((TableModel) table.getModel());
 		table.setRowSorter(sorter);
+		
+		table.setCellSelectionEnabled(false);
 
 		scrollPane.setViewportView(table);
 

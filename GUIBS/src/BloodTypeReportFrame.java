@@ -24,32 +24,30 @@ public class BloodTypeReportFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public BloodTypeReportFrame() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		
-		
+
 		table = new JTable(makeTableModel(SQLConnection.getBloodTypeReport()));
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>((TableModel) table.getModel());
 		table.setRowSorter(sorter);
 
 		scrollPane.setViewportView(table);
-		
-		
+
 		panel.add(scrollPane, BorderLayout.CENTER);
 		pack();
 		setVisible(true);
 	}
-	
+
 	public static DefaultTableModel makeTableModel(ResultSet rs) {
 		try {
 			ResultSetMetaData rsMetaData = rs.getMetaData();

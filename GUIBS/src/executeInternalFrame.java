@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -20,6 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import com.mysql.fabric.xmlrpc.base.Data;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -38,12 +42,17 @@ public class executeInternalFrame extends JFrame {
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		Vector<JTextField> tfVector = new Vector<JTextField>();
+		Vector<JTextField> tfUVector = new Vector<JTextField>();
 
 		StringBuilder sbInsert = new StringBuilder();
 		sbInsert.append("INSERT INTO " + FROMTable + " VALUES( ");
 
 		StringBuilder sbDelete = new StringBuilder();
 		sbDelete.append("DELETE FROM " + FROMTable + " WHERE ");
+
+		// UPDATE t SET id = id + 1;
+		StringBuilder sbUpdate = new StringBuilder();
+		sbUpdate.append("UPDATE " + FROMTable + " SET ");
 
 		JPanel parentPanel = new JPanel();
 		getContentPane().add(parentPanel, BorderLayout.CENTER);
@@ -108,9 +117,9 @@ public class executeInternalFrame extends JFrame {
 		JPanel deletePanel = new JPanel();
 		parentPanel.add(deletePanel, "deletePanel");
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
-		gbl_panel_2.columnWidths = new int[] { };
+		gbl_panel_2.columnWidths = new int[] {};
 		gbl_panel_2.rowHeights = new int[] { 0 };
-		gbl_panel_2.columnWeights = new double[] { };
+		gbl_panel_2.columnWeights = new double[] {};
 		gbl_panel_2.rowWeights = new double[] { Double.MIN_VALUE };
 		deletePanel.setLayout(gbl_panel_2);
 
@@ -164,11 +173,111 @@ public class executeInternalFrame extends JFrame {
 		JPanel updatePanel = new JPanel();
 		parentPanel.add(updatePanel, "updatePanel");
 		GridBagLayout gbl_panel_3 = new GridBagLayout();
-		gbl_panel_3.columnWidths = new int[] { 0 };
-		gbl_panel_3.rowHeights = new int[] { 0 };
-		gbl_panel_3.columnWeights = new double[] { Double.MIN_VALUE };
-		gbl_panel_3.rowWeights = new double[] { Double.MIN_VALUE };
+		gbl_panel_3.columnWidths = new int[] { 0, 268, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_3.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_panel_3.columnWeights = new double[] { 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
+		gbl_panel_3.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
 		updatePanel.setLayout(gbl_panel_3);
+
+		JButton btnUpdate = new JButton("UPDATE");
+		GridBagConstraints gbc_lblUpdate = new GridBagConstraints();
+		gbc_lblUpdate.insets = new Insets(0, 0, 5, 5);
+		gbc_lblUpdate.gridx = 1;
+		gbc_lblUpdate.gridy = 1;
+		btnUpdate.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (int index = 0; index < tfUVector.size(); index++) {
+					System.out.println("index: " + index + " out of " + tfUVector.size());
+					System.out.println(tfUVector.elementAt(index).getText().toString() + " == \"\" : "+ !tfUVector.elementAt(index).getText().equals(""));
+					if (!tfUVector.elementAt(index).getText().equals("")) {
+						System.out.println("Not empty at index: " + index);
+						if (index == tfUVector.size() - 1) {
+							try {
+								try { // if it is a number
+									Integer.parseInt(tfUVector.elementAt(index).getText());
+									sbUpdate.append(metaData.getMetaData().getColumnName(index + 1) + " = "
+											+ tfUVector.elementAt(index).getText() + " ");
+								} catch (NumberFormatException nfe) { // else it
+																		// is a
+																		// string
+									sbUpdate.append(metaData.getMetaData().getColumnName(index + 1) + " = '"
+											+ tfUVector.elementAt(index).getText() + "' ");
+								}
+
+							} catch (SQLException e1) {
+								e1.printStackTrace();
+							}
+						} else if (index < tfUVector.size() - 1) {
+							try {
+								try {
+									Integer.parseInt(tfUVector.elementAt(index).getText());
+									sbUpdate.append(metaData.getMetaData().getColumnName(index + 1) + " = "
+											+ tfUVector.elementAt(index).getText() + ", ");
+								} catch (NumberFormatException nfe) {
+									sbUpdate.append(metaData.getMetaData().getColumnName(index + 1) + " = '"
+											+ tfUVector.elementAt(index).getText() + "', ");
+								}
+
+							} catch (SQLException e1) {
+								e1.printStackTrace();
+							}
+						}
+					}
+
+				}
+				
+				if(sbUpdate.toString().endsWith(", ")){
+					sbUpdate.delete(sbUpdate.length()-2, sbUpdate.length()-1); //= sbUpdate.toString().substring(0, sbUpdate.length()-2);
+					sbUpdate.append(' ');
+				}
+				Connection connection = SQLConnection.connectToDatabase();
+				try {
+					DatabaseMetaData dbMetadata = connection.getMetaData();
+
+					sbUpdate.append("WHERE " + tfUVector.elementAt(0).getName() + " = "
+							+ tfUVector.elementAt(0).getText());
+					System.out.println(sbUpdate.toString());
+				} catch (SQLException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				try {
+					System.out.println(sbUpdate.toString());
+					Statement statement = connection.createStatement();
+					statement.executeUpdate(sbUpdate.toString());
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}finally{
+					SQLConnection.closeConnectionToDatabase(connection);
+				}
+			}
+
+		});
+
+		System.out.println(sbUpdate.toString());
+		updatePanel.add(btnUpdate, gbc_lblUpdate);
+		try {
+			int columnCount = metaData.getMetaData().getColumnCount();
+			GridBagConstraints gblc = new GridBagConstraints();
+
+			for (int counter = 1; counter <= columnCount; counter++) {
+				gblc.fill = GridBagConstraints.BOTH;
+				gblc.gridx = 0;
+				gblc.gridy = ((counter - 1) * 2);
+				updatePanel.add(new JLabel(metaData.getMetaData().getColumnName(counter)), gblc);
+
+				gblc.gridy += 1;
+				JTextField tf = new JTextField(15);
+				tf.setName(metaData.getMetaData().getColumnName(counter));
+				tfUVector.add(tf);
+				updatePanel.add(tf, gblc);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 		pack();
 

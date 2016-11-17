@@ -161,13 +161,13 @@ public class SQLConnection {
 		}
 		return null;
 	}
-	
-	public static void populateTableRequests(){
+
+	public static void populateTableRequests() {
 		File file = new File("TupleTextFiles\\Requests.txt");
 		String sql = "INSERT INTO request (requistID, bloodAmount, bloodType, bloodconfirm, branchID, providerID, requestMonth, requestDay, requestYear)"
-				+"VALUES(?,?,?,?,?,?,?,?,?)";
+				+ "VALUES(?,?,?,?,?,?,?,?,?)";
 	}
-	
+
 	public static void populateTableHCProv() {
 		File file = new File("TupleTextFiles\\HC_Provider.txt");
 		String sql = "INSERT INTO hc_provider (providerID, name, email, address, phoneNumber)" + " VALUES(?,?,?,?,?)";
@@ -712,7 +712,7 @@ public class SQLConnection {
 		return metaData;
 	}
 
-	public static ResultSet getDonationPerDonorReport(){
+	public static ResultSet getDonationPerDonorReport() {
 		Statement st = null;
 		ResultSet rs = null;
 		String sql = "SELECT LastName, FirstName, BloodAmount FROM Donor JOIN Blood on Donor.donorID = Blood.donorID";
@@ -720,8 +720,94 @@ public class SQLConnection {
 			Connection connection = SQLConnection.connectToDatabase();
 			st = connection.createStatement();
 			rs = st.executeQuery(sql);
-			
-			
+
+			return rs;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static ResultSet getRequestByHC_Provider() {
+		Statement st = null;
+		ResultSet rs = null;
+		String sql = "SELECT hc_provider.providerID, requestID, requestMonth, requestDay, requestYear FROM hc_provider, request WHERE hc_provider.providerID=request.providerID";
+		try {
+			Connection connection = SQLConnection.connectToDatabase();
+			st = connection.createStatement();
+			rs = st.executeQuery(sql);
+
+			return rs;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static ResultSet getInventoryReport() {
+		Statement st = null;
+		ResultSet rs = null;
+		String sql = "SELECT blood.branchID, BloodType, COUNT(*) "
+				+ "FROM blood JOIN branch on blood.branchID = branch.branchID "
+				+ "JOIN donor on blood.donorID = donor.donorID " + "GROUP BY bloodType";
+		try {
+			Connection connection = SQLConnection.connectToDatabase();
+			st = connection.createStatement();
+			rs = st.executeQuery(sql);
+
+			return rs;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static ResultSet getBloodTypeReport() {
+		Statement st = null;
+		ResultSet rs = null;
+		String sql = "SELECT bloodType, COUNT(*) FROM Donor GROUP BY bloodType";
+		try {
+			Connection connection = SQLConnection.connectToDatabase();
+			st = connection.createStatement();
+			rs = st.executeQuery(sql);
+
+			return rs;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static ResultSet getDonationByBranches(){
+		Statement st = null;
+		ResultSet rs = null;
+		String sql = "SELECT blood.branchID, COUNT(*) FROM blood GROUP BY blood.branchID";
+		try {
+			Connection connection = SQLConnection.connectToDatabase();
+			st = connection.createStatement();
+			rs = st.executeQuery(sql);
+
+			return rs;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static ResultSet getDonationPerIndividual(){
+		Statement st = null;
+		ResultSet rs = null;
+		String sql = "SELECT donor.donorID, donor.firstName, donor.lastName, bloodType, COUNT(*) FROM donor JOIN blood ON donor.donorID = blood.donorID GROUP BY donor.donorID";
+		try {
+			Connection connection = SQLConnection.connectToDatabase();
+			st = connection.createStatement();
+			rs = st.executeQuery(sql);
+
 			return rs;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
