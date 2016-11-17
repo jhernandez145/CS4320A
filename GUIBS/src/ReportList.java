@@ -42,20 +42,6 @@ public class ReportList extends JFrame {
 			}
 		});
 
-		JButton btnInventoryReport = new JButton("Inventory/Branch");
-		btnInventoryReport.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new ReportView(SQLConnection.getInventoryReport());
-			}
-		});
-
-		JButton btnBloodType = new JButton("Blood Type");
-		btnBloodType.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new ReportView(SQLConnection.getBloodTypeReport());
-			}
-		});
-
 		JButton btnDonationbranch = new JButton("Donation/Branch");
 		btnDonationbranch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -83,19 +69,33 @@ public class ReportList extends JFrame {
 				new ReportView(SQLConnection.getDonationPerIndividual());
 			}
 		});
+		
+				JButton btnBloodType = new JButton("Blood Type");
+				btnBloodType.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						new ReportView(SQLConnection.getBloodTypeReport());
+					}
+				});
+				GridBagConstraints gbc_btnBloodType = new GridBagConstraints();
+				gbc_btnBloodType.fill = GridBagConstraints.BOTH;
+				gbc_btnBloodType.insets = new Insets(0, 0, 5, 5);
+				gbc_btnBloodType.gridx = 1;
+				gbc_btnBloodType.gridy = 0;
+				panel.add(btnBloodType, gbc_btnBloodType);
 		panel.add(btnDonationdonor, gbc_btnDonationdonor);
-		GridBagConstraints gbc_btnBloodType = new GridBagConstraints();
-		gbc_btnBloodType.fill = GridBagConstraints.BOTH;
-		gbc_btnBloodType.insets = new Insets(0, 0, 0, 5);
-		gbc_btnBloodType.gridx = 0;
-		gbc_btnBloodType.gridy = 1;
-		panel.add(btnBloodType, gbc_btnBloodType);
-		GridBagConstraints gbc_btnInventoryReport = new GridBagConstraints();
-		gbc_btnInventoryReport.fill = GridBagConstraints.BOTH;
-		gbc_btnInventoryReport.insets = new Insets(0, 0, 0, 5);
-		gbc_btnInventoryReport.gridx = 1;
-		gbc_btnInventoryReport.gridy = 1;
-		panel.add(btnInventoryReport, gbc_btnInventoryReport);
+		
+				JButton btnInventoryReport = new JButton("Inventory/Branch");
+				btnInventoryReport.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						new ReportView(SQLConnection.getInventoryReport());
+					}
+				});
+				GridBagConstraints gbc_btnInventoryReport = new GridBagConstraints();
+				gbc_btnInventoryReport.fill = GridBagConstraints.BOTH;
+				gbc_btnInventoryReport.insets = new Insets(0, 0, 0, 5);
+				gbc_btnInventoryReport.gridx = 0;
+				gbc_btnInventoryReport.gridy = 1;
+				panel.add(btnInventoryReport, gbc_btnInventoryReport);
 		GridBagConstraints gbc_btnRequesthcprovider = new GridBagConstraints();
 		gbc_btnRequesthcprovider.fill = GridBagConstraints.BOTH;
 		gbc_btnRequesthcprovider.gridx = 2;
