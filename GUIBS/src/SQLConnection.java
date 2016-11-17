@@ -19,8 +19,6 @@ public class SQLConnection {
 	private static final String DB_URL = "jdbc:mysql://localhost:3306/SAFEBLOOD?autoReconnect=true&useSSL=false";
 	private static final String DB_USER = "root";
 	private static final String DB_PASS = "";
-	private String user;
-	private String pass;
 	private static boolean auth;
 	private static int empID;
 
@@ -29,8 +27,6 @@ public class SQLConnection {
 	}
 
 	public SQLConnection(String user, String pass) {
-		this.user = user;
-		this.pass = pass;
 		PreparedStatement preparedStatement = null;
 		Connection connection = null;
 		try {
@@ -45,7 +41,7 @@ public class SQLConnection {
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
-				String name = resultSet.getString("firstname");
+				resultSet.getString("firstname");
 				String usr = resultSet.getString("username");
 				String pwd = resultSet.getString("password");
 				int empID = resultSet.getInt("employeeID");
