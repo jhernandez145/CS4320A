@@ -1,5 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

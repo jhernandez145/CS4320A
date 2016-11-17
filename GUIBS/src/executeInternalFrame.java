@@ -154,11 +154,12 @@ public class executeInternalFrame extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					sbDelete.append(jcb.getSelectedItem() + " = " + tfDelete.getText());
+					sbDelete.append(jcb.getSelectedItem().toString() + " = " + tfDelete.getText());
 
 					Connection connection = SQLConnection.connectToDatabase();
 					try {
 						Statement statement = connection.createStatement();
+						statement.execute(sbDelete.toString());
 						System.out.println(sbDelete.toString());
 					} catch (SQLException e1) {
 						e1.printStackTrace();
