@@ -393,22 +393,6 @@ public class SQLConnection {
 		return metaData;
 	}
 
-	public static ResultSet getDonationPerDonorReport() {
-		Statement st = null;
-		ResultSet rs = null;
-		String sql = "SELECT LastName, FirstName, BloodAmount FROM Donor JOIN Blood on Donor.donorID = Blood.donorID";
-		try {
-			Connection connection = SQLConnection.connectToDatabase();
-			st = connection.createStatement();
-			rs = st.executeQuery(sql);
-
-			return rs;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	public static ResultSet getRequestByHC_Provider() {
 		Statement st = null;

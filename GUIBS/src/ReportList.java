@@ -38,28 +38,28 @@ public class ReportList extends JFrame {
 		JButton btnRequesthcprovider = new JButton("Request/HC_Provider");
 		btnRequesthcprovider.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new RequestByHC_ProviderFrame();
+				new ReportView(SQLConnection.getRequestByHC_Provider());
 			}
 		});
 
 		JButton btnInventoryReport = new JButton("Inventory/Branch");
 		btnInventoryReport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new InventoryReportFrame();
+				new ReportView(SQLConnection.getInventoryReport());
 			}
 		});
 
 		JButton btnBloodType = new JButton("Blood Type");
 		btnBloodType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new BloodTypeReportFrame();
+				new ReportView(SQLConnection.getBloodTypeReport());
 			}
 		});
-		
+
 		JButton btnDonationbranch = new JButton("Donation/Branch");
 		btnDonationbranch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new DonationByBranchFrame();
+				new ReportView(SQLConnection.getDonationPerIndividual());
 			}
 		});
 		GridBagConstraints gbc_btnDonationbranch = new GridBagConstraints();
@@ -68,34 +68,22 @@ public class ReportList extends JFrame {
 		gbc_btnDonationbranch.gridx = 0;
 		gbc_btnDonationbranch.gridy = 0;
 		panel.add(btnDonationbranch, gbc_btnDonationbranch);
-		
-		JButton btnDonationdonor_1 = new JButton("Donation/Donor");
-		btnDonationdonor_1.addActionListener(new ActionListener() {
+
+
+		JButton btnDonationdonor = new JButton("Donation/Donor");
+		GridBagConstraints gbc_btnDonationdonor = new GridBagConstraints();
+		gbc_btnDonationdonor.fill = GridBagConstraints.BOTH;
+		gbc_btnDonationdonor.insets = new Insets(0, 0, 5, 0);
+		gbc_btnDonationdonor.gridx = 2;
+		gbc_btnDonationdonor.gridy = 0;
+		btnDonationdonor.addActionListener(new ActionListener() {
+
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DonationPerDonorFrame();
+				new ReportView(SQLConnection.getDonationPerIndividual());
 			}
 		});
-		GridBagConstraints gbc_btnDonationdonor_1 = new GridBagConstraints();
-		gbc_btnDonationdonor_1.fill = GridBagConstraints.BOTH;
-		gbc_btnDonationdonor_1.insets = new Insets(0, 0, 5, 5);
-		gbc_btnDonationdonor_1.gridx = 1;
-		gbc_btnDonationdonor_1.gridy = 0;
-		panel.add(btnDonationdonor_1, gbc_btnDonationdonor_1);
-		
-				JButton btnDonationdonor = new JButton("Donation/Donor");
-				GridBagConstraints gbc_btnDonationdonor = new GridBagConstraints();
-				gbc_btnDonationdonor.fill = GridBagConstraints.BOTH;
-				gbc_btnDonationdonor.insets = new Insets(0, 0, 5, 0);
-				gbc_btnDonationdonor.gridx = 2;
-				gbc_btnDonationdonor.gridy = 0;
-				btnDonationdonor.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						new DonationPerDonorFrame();
-					}
-				});
-				panel.add(btnDonationdonor, gbc_btnDonationdonor);
+		panel.add(btnDonationdonor, gbc_btnDonationdonor);
 		GridBagConstraints gbc_btnBloodType = new GridBagConstraints();
 		gbc_btnBloodType.fill = GridBagConstraints.BOTH;
 		gbc_btnBloodType.insets = new Insets(0, 0, 0, 5);

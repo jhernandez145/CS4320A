@@ -83,7 +83,7 @@ public class SQLView extends JFrame {
 
 		textField = new JTextField();
 		textField.setToolTipText(
-				"Use a semi-colon (;) to seperate conditions.\r\n(name=\"joe\";id=123) and a percent sign for\r\nwildcard search (email=%@mail.net%)");
+				"Use a semi-colon (;) to seperate conditions.\r\n(name=\"joe\";id=123)");
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.insets = new Insets(0, 0, 5, 5);
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
@@ -129,9 +129,6 @@ public class SQLView extends JFrame {
 			}
 		});
 		mnLogout.add(mntmTestConnection);
-
-		JMenuItem mntmLogout = new JMenuItem("Logout");
-		mnLogout.add(mntmLogout);
 
 		JMenu mnQuery = new JMenu("Query");
 		menuBar.add(mnQuery);
