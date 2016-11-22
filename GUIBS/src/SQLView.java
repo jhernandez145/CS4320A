@@ -167,7 +167,7 @@ public class SQLView extends JFrame {
 				System.out.println("\n\n");
 
 				StringBuilder sbSELECT = new StringBuilder();
-				sbSELECT.append("SELECT ");
+				sbSELECT.append("SELECT "); //.append(SQLConnection.getPrimaryKeysByTable().get(FROMTable)).append(" ");
 				if (sqlCustomSELECT.isEmpty()) {
 					sbSELECT.append(" * ");
 				} else {
@@ -191,6 +191,7 @@ public class SQLView extends JFrame {
 				System.out.println(table.toString());
 				table.setAutoCreateRowSorter(true);
 				table.setRowSorter(new TableRowSorter<TableModel>(table.getModel()));
+				table.setEnabled(false);
 			}
 		});
 		mnQuery.add(mntmRefresh);

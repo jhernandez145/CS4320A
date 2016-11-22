@@ -83,6 +83,7 @@ public class executeInternalFrame extends JFrame {
 					} else if (index < tfVector.size() - 1) {
 						sbInsert.append("'" + tfVector.elementAt(index).getText() + "', ");
 					}
+					System.out.println(sbInsert);
 				}
 				Connection connection = SQLConnection.connectToDatabase();
 				try {

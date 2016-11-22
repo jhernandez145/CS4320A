@@ -88,7 +88,7 @@ public class ViewListFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new SQLView("hc_prov");
+				new SQLView("hc_provider");
 
 			}
 		});
